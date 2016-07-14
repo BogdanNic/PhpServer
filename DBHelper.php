@@ -925,15 +925,15 @@ $affected_rows=$stmt->affected_rows;
 $stmt->close();
 //echo $affected_rows;   
   
-if($affected_rows==-1) {   
+if($affected_rows==-1) {     
 	$res['error']=true;      
 	$res['message']='check param';  
-}    
+}        
  
 if($affected_rows>0){      
 	$res['error']=false;     
-	$res['raport_id']=$insert_id;   
-	//echo "bine1";   
+	$res['insert_id']=$insert_id;   
+	//echo "bine1";     
 }
 return $res; 
 }
@@ -965,7 +965,7 @@ if($affected_rows==-1) {
  
 if($affected_rows>0){      
 	$res['error']=false;     
-	$res['raport_id']=$insert_id;   
+	$res['affected_rows']=$affected_rows;     
 	//echo "bine1";   
 }
 return $res; 
