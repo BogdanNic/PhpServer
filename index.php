@@ -701,8 +701,8 @@ $deviceType="web";break;
 
 $app->post('/raports2/token',auth,function() use ($app){
    global $user_id; 
-   global $user_name;      
-$response=array();  
+   global $user_name;        
+$response=array();    
 $response['error']=true;       
 $response['device']   =$device=$app->request->post('device');
 $response['os']   =$os=$app->request->post('os');
@@ -711,16 +711,22 @@ $response['userId']   =$user_id;
 
 $db=new DBHelper();
 	    $res = $db->findDevice($device,$user_id);
-		if($res['nr']==1){
-			$res3=$db->updateToken($user_id,$device,$os,$token);
-			$response['result2']=$res3;
-			$response['error']=$res3['error'];
-		}else{
-			$res2=$db->insertToken($user_id,$device,$os,$token);
-			$response['result2']=$res2;
-			$response['error']=$res2['error'];
+		$result=$res['result'];
+		$responseToken=$result[0]['token'];
+		if($responseToken==$token)
+		{  
+			echo "it equal";   
 		}
-resJson(200,$response);           
+		// if($res['nr']==1){
+		// 	$res3=$db->updateToken($user_id,$device,$os,$token);
+		// 	$response['result2']=$res3;
+		// 	$response['error']=$res3['error'];
+		// }else{
+		// 	$res2=$db->insertToken($user_id,$device,$os,$token);
+		// 	$response['result2']=$res2;
+		// 	$response['error']=$res2['error'];
+		// }
+resJson(200,$response);                 
 });  
 
 

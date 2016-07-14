@@ -879,11 +879,11 @@ $response=array();
 //echo $user_id;  
 //return true;   
  $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
- $stmt = $mysql->prepare("SELECT RaportUserTokenID FROM RaportUserTokens WHERE UserRaportID=? and Device=?");        
+ $stmt = $mysql->prepare("SELECT RaportUserTokenID,Token FROM RaportUserTokens WHERE UserRaportID=? and Device=?");        
  $stmt->bind_param("is",$user_id,$device);               
  $result = $stmt->execute(); 
  $stmt->store_result();
- $res=$stmt->bind_result($deviceId);        
+ $res=$stmt->bind_result($deviceId,$token);        
    
   //echo $stmt->num_rows;
   $num_rows = $stmt->num_rows;
@@ -893,9 +893,12 @@ $response=array();
 //  			} 
 //  		else return false; 
 $ids=array();
-if($res=true){
- while($stmt->fetch()){ 
-	 $ids[]=$deviceId; 
+$responseDevice=array();
+if($res=true){  
+ while($stmt->fetch()){
+	 $responseDevice['id']=$deviceId;
+	 $responseDevice['token']=$token; 
+	 $ids[]=$responseDevice; 
  }} 
  $response['result']=$ids; 	 
 $response['nr']=$num_rows;  
@@ -940,11 +943,11 @@ public function updateToken($user_id,$device,$os,$token)
 // echo $device;
 // echo $os;
 // echo $token;
-	$res=array();  
+	$res=array();    
 $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
-$stmt = $mysql->prepare("INSERT INTO RaportUserTokens(UserRaportID, Device, OS, Token) VALUES (?,?,?,?)");        
-$stmt->bind_param("isss",$user_id,$device,$os,$token);          
-$stmt->execute();     
+$stmt = $mysql->prepare("UPDATE RaportUserTokens SET OS=?, Token=? WHERE UserRaportID=? and Device=?");        
+$stmt->bind_param("ssis",$os,$token,$user_id,$device);          
+$stmt->execute();       
 $stmt->store_result();         
 $num_rows=$stmt->num_rows;	//pt select
 $insert_id=$stmt->insert_id;  
