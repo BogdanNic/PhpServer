@@ -186,7 +186,7 @@ $response['command']=$command;
  return $response;
 
 }
-return $response;
+return $response;  
 }  
 
 
@@ -859,19 +859,48 @@ $affected_rows=$stmt->affected_rows;
 $stmt->close();
 //echo $affected_rows; 
   
-if($affected_rows==-1) { 
+if($affected_rows==-1) {   
 	$res['error']=true;      
-	$res['message']='check param';
-} 
+	$res['message']='check param';  
+}    
  
 if($affected_rows>0){      
 	$res['error']=false;     
-	$res['raport_id']=$insert_id; 
+	$res['raport_id']=$insert_id;   
 	//echo "bine1";   
 } 
 return $res;    
 }
 
+
+public function findDevice($device,$user_id){
+$response=array(); 
+//echo $device;
+//echo $user_id;  
+//return true;   
+ $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
+ $stmt = $mysql->prepare("SELECT RaportUserTokenID FROM RaportUserTokens WHERE UserRaportID=? and Device=?");        
+ $stmt->bind_param("is",$user_id,$device);               
+ $result = $stmt->execute(); 
+ $stmt->store_result();
+ $res=$stmt->bind_result($deviceId);        
+   
+  //echo $stmt->num_rows;
+  $num_rows = $stmt->num_rows;
+//  	if($num_rows==1){  
+// 			  echo $id;
+//  			return true;         
+//  			} 
+//  		else return false; 
+$ids=array();
+if($res=true){
+ while($stmt->fetch()){ 
+	 $ids[]=$deviceId; 
+ }} 
+ $response['result']=$ids; 	 
+$response['nr']=$num_rows;  
+return $response;  
+}
 
 private function checkUserExist($email){
 	$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
@@ -881,8 +910,8 @@ private function checkUserExist($email){
 	$stmt->store_result();
 	$num_rows = $stmt->num_rows;
 	if($num_rows==0){  
-			return false;       
-			} 
+			return false;           
+			}   
 		else return true; 	  
 }
 public function getAllQuiz(){

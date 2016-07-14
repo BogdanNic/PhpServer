@@ -701,15 +701,22 @@ $deviceType="web";break;
 
 $app->post('/raports2/token',auth,function() use ($app){
    global $user_id; 
-   global $user_name;
+   global $user_name;    
 $response=array();
-$response['error']=true;   
-$response['deviceType']   =$deviceType=$app->request->post('deviceType');
-$response['deviceName']   =$deviceName=$app->request->post('deviceName');
+$response['error']=true;     
+$response['device']   =$device=$app->request->post('device');
+$response['os']   =$deviceName=$app->request->post('os');
 $response['token']   =$deviceType=$app->request->post('token');
 $response['userId']   =$user_id;
 
-resJson(200,$response);  
+$db=new DBHelper();
+	    $res = $db->findDevice($device,$user_id);
+		if($res['nr']==1){
+			echo 'update';  
+		}else{
+			echo 'insert';
+		}
+resJson(200,$response);       
 });  
 
 
