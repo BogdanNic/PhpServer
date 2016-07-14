@@ -843,9 +843,9 @@ public function insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$u
 //echo $ip;   
 ///echo $command;   
 //echo $lastUpdate;          
-          
+                
          
-$res=array();  
+$res=array();    
 $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
 $stmt = $mysql->prepare("INSERT INTO MetaRaport (RaportID,userRaportID, IP,Command,LastUpdate,UserAgent,DeviceType) VALUES (?, ?, ?, ?, ?,?,?)");        
 $stmt->bind_param("iississ",$raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType);          
@@ -901,7 +901,72 @@ if($res=true){
 $response['nr']=$num_rows;  
 return $response;  
 }
-
+public function insertToken($user_id,$device,$os,$token)
+{	
+// echo $user_id;
+// echo $device;
+// echo $os;
+// echo $token;
+	$res=array();  
+$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
+$stmt = $mysql->prepare("INSERT INTO RaportUserTokens(UserRaportID, Device, OS, Token) VALUES (?,?,?,?)");        
+$stmt->bind_param("isss",$user_id,$device,$os,$token);          
+$stmt->execute();     
+$stmt->store_result();         
+$num_rows=$stmt->num_rows;	//pt select
+$insert_id=$stmt->insert_id;  
+//echo $insert_id;  
+//Returns the number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query. 
+$affected_rows=$stmt->affected_rows; 
+//echo "insert :$insert_id Num: $num_rows a: $affected_rows"; 
+$stmt->close();
+//echo $affected_rows;   
+  
+if($affected_rows==-1) {   
+	$res['error']=true;      
+	$res['message']='check param';  
+}    
+ 
+if($affected_rows>0){      
+	$res['error']=false;     
+	$res['raport_id']=$insert_id;   
+	//echo "bine1";   
+}
+return $res; 
+}
+public function updateToken($user_id,$device,$os,$token)
+{	
+// echo $user_id;
+// echo $device;
+// echo $os;
+// echo $token;
+	$res=array();  
+$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
+$stmt = $mysql->prepare("INSERT INTO RaportUserTokens(UserRaportID, Device, OS, Token) VALUES (?,?,?,?)");        
+$stmt->bind_param("isss",$user_id,$device,$os,$token);          
+$stmt->execute();     
+$stmt->store_result();         
+$num_rows=$stmt->num_rows;	//pt select
+$insert_id=$stmt->insert_id;  
+//echo $insert_id;  
+//Returns the number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query. 
+$affected_rows=$stmt->affected_rows; 
+//echo "insert :$insert_id Num: $num_rows a: $affected_rows"; 
+$stmt->close();
+//echo $affected_rows;   
+  
+if($affected_rows==-1) {   
+	$res['error']=true;      
+	$res['message']='check param';  
+}    
+ 
+if($affected_rows>0){      
+	$res['error']=false;     
+	$res['raport_id']=$insert_id;   
+	//echo "bine1";   
+}
+return $res; 
+}
 private function checkUserExist($email){
 	$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
 	$stmt = $mysql->prepare("SELECT Name, Email FROM userRaport WHERE Email = ?");
