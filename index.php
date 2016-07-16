@@ -25,7 +25,7 @@ $app->response->headers->set('Access-Control-Allow-Origin','*');
 resJson(212,"");       
 });
 
-//user new Raport2
+//user new Raport2  
 //.............
 
 $app->options("/raports2",function()use ($app){  
@@ -35,7 +35,7 @@ cors();
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
 resJson(212,"");             
 });
-$app->options("/raports2/:raport_id",function()use ($app){  
+$app->options("/raports2/:raport_id",function()use ($app){    
  $app = \Slim\Slim::getInstance();          
 cors();     
 //$app->response->headers->set('Content-Type','application/json');
@@ -69,7 +69,7 @@ cors();
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
 resJson(212,"");     
 });    
-function cors() {
+function cors() {  
 
     // Allow from any origin
     if (isset($_SERVER['HTTP_ORIGIN'])) {
@@ -102,18 +102,18 @@ resJson(212,"");
 ////new Raport2
 //..................
 $app->get('/raports2',auth,function() use ($app){  
-   global $user_name;
-global $user_id;   
-$db=new DBHelper();  
-$timeUnix=time();   
-//echo $timeUnix;  
-//echo $user_id;
+   	global $user_name;
+	global $user_id;   
+	$db=new DBHelper();  
+	$timeUnix=time();   
+	//echo $timeUnix;  
+	//echo $user_id;
 
-$res=$db->getAllRaportsNew2($user_id,$user_name);
-$result=array();
-$result['error']=false;  
-$result['raports']=$res;
-resJson(200,$res);    
+	$res=$db->getAllRaportsNew2($user_id,$user_name);
+	$result=array();
+	$result['error']=false;  
+	$result['raports']=$res;
+	resJson(200,$res);    
   
 });
 
@@ -124,30 +124,30 @@ $app->post('/raports2',auth,function() use ($app){
 $response=array();    
    global $user_id;   
    global $user_name;
-   
+   global $model;
    //echo $user_id;   
-$response['ore']    =$Ore=$app->request->post('ore');
-$response['min']    =$Minute=$app->request->post('minute');
-$response['materiale']=$Materiale=$app->request->post('materiale');
-$response['vizualizari']=$Vizualizari=$app->request->post('vizualizari');
-$response['studi']  =$Studi=$app->request->post('studi');
-$response['visite'] =$Visite=$app->request->post('visite');
-$response['partener'] =$Partener=$app->request->post('partener');
-$response['month'] =$Month=$app->request->post('month'); 
-$response['ip']=$ip=$app->request->getIp(); 
-$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate'); 
-$response['userAgent']=$userAgent=$app->request->getUserAgent();
-//$response;   
-$deviceType="";
-if($userAgent){
-switch($userAgent){
-case "Android":$deviceType="android";break;
-case "WindowsPhone 8":$deviceType="winphone"; break;
-case "Windows 8":$deviceType="winrt"; break;
-default:
-$deviceType="web";break;  
-}
-}
+	$response['ore']    =$Ore=$app->request->post('ore');
+	$response['min']    =$Minute=$app->request->post('minute');
+	$response['materiale']=$Materiale=$app->request->post('materiale');
+	$response['vizualizari']=$Vizualizari=$app->request->post('vizualizari');
+	$response['studi']  =$Studi=$app->request->post('studi');
+	$response['visite'] =$Visite=$app->request->post('visite');
+	$response['partener'] =$Partener=$app->request->post('partener');
+	$response['month'] =$Month=$app->request->post('month'); 
+	$response['ip']=$ip=$app->request->getIp(); 
+	$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate');   
+	$response['userAgent']=$userAgent=$app->request->getUserAgent();
+	//$response;   
+	$deviceType="";
+	if($userAgent){
+		switch($userAgent){
+			case "Android":$deviceType="android";break;
+			case "WindowsPhone 8":$deviceType="winphone"; break;
+			case "Windows 8":$deviceType="winrt"; break;
+			default:
+			$deviceType="web";break;  
+		}
+	}
 $db=new DBHelper();  
 //$res2=$db->test(111);
 //$res2=db->test($user_name,$Partener,$Month,$Ore,$Minute,$Reviste,$Carti,$Brosuri,$Visite,$Studi); 
@@ -167,7 +167,7 @@ case 0: //echo "no";
 				//echo "RaportID:"+ $raport_id;      
 				//echo $lastUpdate;    
 				//echo $command;    
-					$res3=$db->insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType);
+					$res3=$db->insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType,$model);
 						if(!$res3['error']){
 							$metaRaportId=$res3['raport_id']; 
 							//echo $raport_id;
@@ -208,30 +208,31 @@ break;
 $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
    global $user_id; 
    global $user_name;
-$response=array();
-$response['error']=true;   
-$response['ore']    =$Ore=$app->request->post('ore');
-$response['minute']    =$Minute=$app->request->post('minute');
-$response['materiale']=$Materiale=$app->request->post('materiale');
-$response['vizualizari']=$Vizualizari=$app->request->post('vizualizari');
-$response['studi']  =$Studi=$app->request->post('studi');
-$response['visite'] =$Visite=$app->request->post('visite');
-$response['partener'] =$Partener=$app->request->post('partener');
-$response['month'] =$Month=$app->request->post('month'); 
-$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate');
-$response['ip']=$ip=$app->request->getIp(); 
-$response['userAgent']=$userAgent=$app->request->getUserAgent(); 
-//refactor
-$deviceType="";
-if($userAgent){
-switch($userAgent){
-case "Android":$deviceType="android";break;
-case "WindowsPhone 8":$deviceType="winphone"; break;
-case "Windows 8":$deviceType="winrt"; break;
-default:
-$deviceType="web";break;
-}
-}
+   global $model;
+	$response=array();
+	$response['error']=true;   
+	$response['ore']    =$Ore=$app->request->post('ore');
+	$response['minute']    =$Minute=$app->request->post('minute');
+	$response['materiale']=$Materiale=$app->request->post('materiale');
+	$response['vizualizari']=$Vizualizari=$app->request->post('vizualizari');
+	$response['studi']  =$Studi=$app->request->post('studi');
+	$response['visite'] =$Visite=$app->request->post('visite');
+	$response['partener'] =$Partener=$app->request->post('partener');
+	$response['month'] =$Month=$app->request->post('month'); 
+	$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate');
+	$response['ip']=$ip=$app->request->getIp(); 
+	$response['userAgent']=$userAgent=$app->request->getUserAgent(); 
+	//refactor 
+		$deviceType="";
+		if($userAgent){
+		switch($userAgent){
+		case "Android":$deviceType="android";break;
+		case "WindowsPhone 8":$deviceType="winphone"; break;
+		case "Windows 8":$deviceType="winrt"; break;
+		default:
+		$deviceType="web";break;
+		}
+	}
   
 		$db=new DBHelper();
 	    $res = $db->selectMetaByRaportId2($user_id, $user_name, $raport_id, $lastUpdate);
@@ -299,21 +300,22 @@ $deviceType="web";break;
 $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 	global $user_id;   
 	global $user_name;
+	global $model;
 	$userAgent=$app->request->getUserAgent();
  
   // echo $id; 
    $newUpdate=$_GET["lastUpdate"]; 
   
-  $deviceType="";
-if($userAgent){
-switch($userAgent){
-case "Android":$deviceType="android";break;
-case "WindowsPhone 8":$deviceType="winphone"; break;
-case "Windows 8":$deviceType="winrt"; break;
-default:
-$deviceType="web";break;
-}
-}
+	$deviceType="";
+	if($userAgent){
+		switch($userAgent){
+			case "Android":$deviceType="android";break;
+			case "WindowsPhone 8":$deviceType="winphone"; break;
+			case "Windows 8":$deviceType="winrt"; break;
+			default:
+			$deviceType="web";break;
+		}
+	}
   $isNotifyUser=false;  
   $response=array();
   //$lastUpdate=$app->request->post('lastUpdate'); 
@@ -375,14 +377,14 @@ $deviceType="web";break;
 }); 
 
 $app->get('/raports2/updateSince/:id',auth,function($id) use ($app){
-//echo gmdate("Y-m-d\TH:i:s\Z", $id); 
+  //echo gmdate("Y-m-d\TH:i:s\Z", $id); 
 
  //$date2= gmdate("Y-m-d H:i:s", $id); 
   global $user_name;
 	global $user_id;
-$db=new DBHelper();    
-$res=$db->getChangesSince2($user_id,$id);    
-resJson(200,$res);     
+	$db=new DBHelper();    
+	$res=$db->getChangesSince2($user_id,$id);    
+	resJson(200,$res);     
 });
 
 
@@ -407,11 +409,11 @@ $res=$db->getChangesSince($user_id,$id);
 resJson(200,$res);     
 });
 
-$app->get('/raportsNew/preflight',function() use ($app){  
+$app->get('/raportsNew/preflight',function() use ($app){ 	
 	$response=array('error'=>false,'message'=>"all good");
 	resJson(200,$response);   
 });
-$app->get('/raportsNew',auth,function() use ($app){  
+$app->get('/raportsNew',auth,function() use ($app){          
    global $user_name;
 global $user_id;   
 $db=new DBHelper();  
@@ -422,7 +424,7 @@ $timeUnix=time();
 $res=$db->getAllRaportsNew($user_id,$user_name);
 $result=array();
 $result['error']=false;  
-$result['raports']=$res;
+$result['raports']=$res;          
 resJson(200,$res);    
   
 });
@@ -431,36 +433,36 @@ resJson(200,$res);
 
 $app->post('/raportsNew',auth,function() use ($app){
 
-//echo "meta Rap";
-$response=array();    
+ //echo "meta Rap";
+ $response=array();    
    global $user_id;   
    global $user_name;
-   
-   //echo $user_id;   
-$response['ore']    =$Ore=$app->request->post('ore');
-$response['min']    =$Minute=$app->request->post('minute');
-$response['reviste']=$Reviste=$app->request->post('reviste');
-$response['brosuri']=$Brosuri=$app->request->post('brosuri');
-$response['carti']  =$Carti=$app->request->post('carti'); 
-$response['studi']  =$Studi=$app->request->post('studi');
-$response['visite'] =$Visite=$app->request->post('visite');
-$response['partener'] =$Partener=$app->request->post('partener');
-$response['month'] =$Month=$app->request->post('month'); 
-$response['ip']=$ip=$app->request->getIp(); 
-$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate'); 
-$response['userAgent']=$userAgent=$app->request->getUserAgent();
 
-$deviceType="";
-if($userAgent){
-switch($userAgent){
-case "Android":$deviceType="android";break;
-case "WindowsPhone 8":$deviceType="winphone"; break;
-case "Windows 8":$deviceType="winrt"; break;
-default:
-$deviceType="web";break;
-}
-}
-$db=new DBHelper();  
+   //echo $user_id;   
+	$response['ore']    =$Ore=$app->request->post('ore');
+	$response['min']    =$Minute=$app->request->post('minute');
+	$response['reviste']=$Reviste=$app->request->post('reviste');
+	$response['brosuri']=$Brosuri=$app->request->post('brosuri');
+	$response['carti']  =$Carti=$app->request->post('carti'); 
+	$response['studi']  =$Studi=$app->request->post('studi');
+	$response['visite'] =$Visite=$app->request->post('visite');
+	$response['partener'] =$Partener=$app->request->post('partener');
+	$response['month'] =$Month=$app->request->post('month'); 
+	$response['ip']=$ip=$app->request->getIp(); 
+	$response['lastUpdate']=$lastUpdate=$app->request->post('lastUpdate'); 
+	$response['userAgent']=$userAgent=$app->request->getUserAgent();
+
+	$deviceType="";
+	if($userAgent){
+		switch($userAgent){
+		case "Android":$deviceType="android";break;
+		case "WindowsPhone 8":$deviceType="winphone"; break;
+		case "Windows 8":$deviceType="winrt"; break;
+		default:
+		$deviceType="web";break;
+		}
+	}
+	$db=new DBHelper();  
 //$res2=$db->test(111);
 //$res2=db->test($user_name,$Partener,$Month,$Ore,$Minute,$Reviste,$Carti,$Brosuri,$Visite,$Studi);  
 $res=$db->selectRaport($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Reviste,$Brosuri,$Visite,$Studi,$Carti); 
@@ -537,7 +539,8 @@ $app->delete('/raportsNew/:raport_id',auth,function($raport_id) use ($app){
    global $user_name;
    $userAgent=$app->request->getUserAgent();  
   // echo $id; 
-  
+  $model="GT1";
+  if($model==null) $model="GT1";
   
   $deviceType="";
 if($userAgent){
@@ -704,9 +707,9 @@ $app->post('/raports2/token',auth,function() use ($app){
    global $user_name;  
 $device=$app->request->post('device');
 $os=$app->request->post('os');
-$token=$app->request->post('token');
+$token=$app->request->post('token');   
 
-$response=array();    
+$response=array();      
 $response['error']=true;       
 // $response['device']   =$device=$app->request->post('device');
 // $response['os']   =$os=$app->request->post('os');
@@ -768,12 +771,22 @@ if(isset($headers['Authorization']))
 		if(!$res['error']){
 			global $user_id;
 			global $user_name;
+			global $model;
 			$user_id=$res['id']; 
 			$user_name=$res['username'];  
 //echo $user_id;			 
 
 			//echo $user_id;    
-			//echo $user_name;  
+			//echo $user_name; 
+if(isset($headers['Model']))
+	{
+		 $model=$headers['Model'];
+	}else{
+		$model="NoName";
+	}
+
+
+
 		}else{
 			$response['error']=true;
 			$response['message']='Authorization false';
@@ -874,8 +887,14 @@ echo $b."\n";
 echo time();    
 });
 
-$app->delete('/hello/:name/:bog2/:b', function ($name,$bog2,$b) { 
-    echo "Hello, $name "; 
+$app->delete('/hello', function() { 
+    echo "Hello, $name ";   
+//  	$headers=$app->request->headers  ;   
+//  if(isset($headers['Model']))
+//  	{
+//  		$model=$headers['Model']    
+//  	}
+// echo $model;  
 echo $bog2;
 echo $b."\n"; 
 echo time();    
@@ -1030,8 +1049,8 @@ $response['studi']  =$Studi=$app->request->post('studi');
 $response['visite'] =$Visite=$app->request->post('visite');
 $response['partener'] =$Partener=$app->request->post('partener');
 $response['month'] =$Month=$app->request->post('month'); 
-$response['ip']=$ip=$app->request->getIp(); 
-$db=new DBHelper();
+$response['ip']=$ip=$app->request->getIp();      
+$db=new DBHelper();    
 
 $res=$db->updateRaport($id,$user_name,$Partener,$Month,$Ore,$Min,$Reviste,$Carti,$Brosuri,$Visite,$Studi); 
 if(!$res['error']){

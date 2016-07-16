@@ -837,7 +837,7 @@ $mysql->close();
         
 return $res;
 }
-public function insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType){
+public function insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType,$model){
 //echo $response;   
 //echo $raport_id;
 //echo $ip;   
@@ -847,8 +847,8 @@ public function insertMetaRaport($raport_id,$user_id,$ip,$command,$lastUpdate,$u
          
 $res=array();    
 $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
-$stmt = $mysql->prepare("INSERT INTO MetaRaport (RaportID,userRaportID, IP,Command,LastUpdate,UserAgent,DeviceType) VALUES (?, ?, ?, ?, ?,?,?)");        
-$stmt->bind_param("iississ",$raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType);          
+$stmt = $mysql->prepare("INSERT INTO MetaRaport (RaportID,userRaportID, IP,Command,LastUpdate,UserAgent,DeviceType,Model) VALUES (?, ?, ?, ?, ?,?,?,?)");        
+$stmt->bind_param("iississs",$raport_id,$user_id,$ip,$command,$lastUpdate,$userAgent,$deviceType,$model);          
 $stmt->execute();     
 $stmt->store_result();       
 $num_rows=$stmt->num_rows;	//pt select
@@ -958,12 +958,12 @@ $affected_rows=$stmt->affected_rows;
 $stmt->close();
 //echo $affected_rows;   
   
-if($affected_rows==-1) {   
+if($affected_rows==-1) {         
 	$res['error']=true;      
 	$res['message']='check param';  
 }    
  
-if($affected_rows>0){      
+if($affected_rows>0){          
 	$res['error']=false;     
 	$res['affected_rows']=$affected_rows;     
 	//echo "bine1";   
