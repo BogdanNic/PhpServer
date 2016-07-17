@@ -13,11 +13,11 @@ $response = array();
         $stmt->bind_param("sissi", $command, $lastUpdate,$userAgent,$deviceType, $metaRaportID);      
 
         $result = $stmt->execute();    
-        $nrRows = $stmt->affected_rows;
-        switch ($nrRows)
+        $nrRows = $stmt->affected_rows;       
+        switch ($nrRows)           
         {  
             case - 1:  
-                $response['error'] = true;
+                $response['error'] = true;  
                 $response['message'] = 'db error';
                 break;
             case 0:
@@ -492,10 +492,10 @@ $res['error']=true;
 $res['id']=2;
 
 $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
-	$stmt = $mysql->prepare("SELECT ID,Username FROM userRaport WHERE api_key = ?");
+	$stmt = $mysql->prepare("SELECT ID,Username,Email FROM userRaport WHERE api_key = ?");
 	$stmt->bind_param("s", $api_key);
 	$resE=$stmt->execute();
-	$resA=$stmt->bind_result($id,$name);
+	$resA=$stmt->bind_result($id,$name,$email);
 	$stmt->store_result(); //pt a stoca num_row
 	$num_rows = $stmt->num_rows;
 	//echo "resE $resE";  
@@ -506,6 +506,7 @@ $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
 		if($num_rows>0){
 			$res['id']=$id;
 			$res['username']=$name;
+			$res['email']=$email;
 			//echo $name; 
 			$res['error']=false;
 			}
@@ -903,6 +904,62 @@ if($res=true){
  $response['result']=$ids; 	 
 $response['nr']=$num_rows;  
 return $response;  
+}
+public function insertDevice($user_id,$model,$os,$token){  
+	 
+	$res=array();  
+	$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
+	$stmt = $mysql->prepare("INSERT INTO Devices( Model, UserID, OS,Token) 
+	VALUES (?,?,?,?)  on duplicate key 
+	update OS=? ,Token=?");        
+	$stmt->bind_param("sissss",$model,$user_id,$os,$token,$os,$token);            
+	$stmt->execute();       
+	$stmt->store_result();           
+	$num_rows=$stmt->num_rows;	//pt select
+	$insert_id=$stmt->insert_id;  
+	//echo $insert_id;  
+	//Returns the number of rows affected by the last INSERT, UPDATE, REPLACE or DELETE query. 
+	$affected_rows=$stmt->affected_rows; 
+	//echo "insert :$insert_id Num: $num_rows a: $affected_rows"; 
+	$stmt->close();       
+	//echo $affected_rows;                
+  
+  	if($affected_rows==0){
+		  $res['error']=false;
+		   $res['message']='it;s here';
+	  }
+	if($affected_rows==-1) {            
+		$res['error']=true;      
+		$res['message']='check param';  
+	}        
+	
+	if($affected_rows>0){      
+		$res['error']=false;     
+		$res['insert_id']=$insert_id;   
+		//echo "bine1";     
+	}
+	return $res;   
+}
+
+public function getTokens($user_id,$model)
+{
+    $response=array();  
+	$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
+	$stmt = $mysql->prepare("SELECT  Token FROM Devices WHERE UserID=? and Model!=?");        
+	$stmt->bind_param("is",$user_id,$model);            
+	$stmt->execute();     
+	$stmt->store_result(); 
+	$res=$stmt->bind_result($token);              
+	$affected_rows=$stmt->affected_rows;            
+	$responseDevice=array();
+		if($res=true){  
+			while($stmt->fetch()){
+				$ids[]=$token; 
+			}
+		} 
+  	$response['tokens']=$ids;
+  	$stmt->close();  
+  return $response;  
 }
 public function insertToken($user_id,$device,$os,$token)
 {	

@@ -456,7 +456,7 @@ $tokenReal='fB1j-SlhsuI:APA91bEbO26kiIgIDo8RuIWOHz34aKezb2alUSbIaFzRDfZFzJb9J3m7
    $command="SYNC";
    $_data=array(
 	'registration_ids'=>array(
-			$tokenReal,$tokenReal 
+			$tokenReal,$tokenReal                     
 				), 
 	'data' => array(
                 'user' => $user,
@@ -475,5 +475,34 @@ print $jsonData;
 echo curl_error($curl);	
 curl_close($curl);   
 }
+function sendFirebaseNotification($tokens,$email,$command)
+{
+    //    echo json_encode($tokens);  
+    //    echo $email;
+    //    echo $command;
+    $url = 'https://fcm.googleapis.com/fcm/send';
+   $headers=array(
+	'Authorization:key=AIzaSyDhNYr1df8nr0pFplLdY2t8v0Xgo0W-O5c',
+	'Content-Type:application/json'
+   );
+    $_data=array(
+	'registration_ids'=>$tokens, 
+	'data' => array(
+                'user' => $email,
+				'command'=>$command)     
+   );
+   $jsonData=json_encode($_data);
+   $curl = curl_init($url);
+	curl_setopt($curl, CURLOPT_POST, 1);
+    curl_setopt($curl, CURLOPT_POSTFIELDS,$jsonData);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);  
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    echo $_data;
+	   $response = curl_exec($curl);
+	   print $response; 
+print $jsonData;     	   
+echo curl_error($curl);	
+curl_close($curl);   
+}     
 
 ?>

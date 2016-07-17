@@ -24,16 +24,16 @@ cors();
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
 resJson(212,"");       
 });
-
-//user new Raport2  
+    
+//user new Raport2        
 //.............
-
-$app->options("/raports2",function()use ($app){  
+    
+$app->options("/raports2",function()use ($app){    
  $app = \Slim\Slim::getInstance();  
 cors();    
 //$app->response->headers->set('Content-Type','application/json');
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
-resJson(212,"");             
+resJson(212,"");               
 });
 $app->options("/raports2/:raport_id",function()use ($app){    
  $app = \Slim\Slim::getInstance();          
@@ -155,13 +155,13 @@ $db=new DBHelper();
 $res=$db->selectRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi); 
 $nr=count($res);  
 //echo $nr;      
-$results=array();  
+$results=array();        
 switch($nr){
 case 0: //echo "no";
 //echo $user_name;   
 		$res2=$db->insertRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);	   
 		//echo $res2;		
-			if(!$res2['error']){  
+			if(!$res2['error']){    
 				$command='ADD';
 				$raport_id=$res2['raport_id'];
 				//echo "RaportID:"+ $raport_id;      
@@ -700,11 +700,13 @@ $deviceType="web";break;
 		
         resJson(200, $result);
  
-});
+});  
 
 $app->post('/raports2/token',auth,function() use ($app){
    global $user_id; 
-   global $user_name;  
+   global $user_name;
+   global $email;   
+   global $model; 
 $device=$app->request->post('device');
 $os=$app->request->post('os');
 $token=$app->request->post('token');   
@@ -717,25 +719,28 @@ $response['error']=true;
 // $response['userId']   =$user_id;
 
 $db=new DBHelper();
-	    $res = $db->findDevice($device,$user_id);
-		
-		if($res['nr']==1){
-			$result=$res['result'];
-			$responseToken=$result[0]['token'];
-			if($responseToken==$token)    
-			{  
-				$response['result']='it is here!';
-				$response['error']=false;   
-			} else{
-				$res3=$db->updateToken($user_id,$device,$os,$token);
-				$response=$res3;  
-			}    
+	    $res = $db->getTokens($user_id,$model); 
+		$tokens=$res['tokens'];  
+		$command='SYNC';
+		 sendFirebaseNotification($tokens,$email,$command);
+		$response=$res;
+		// if($res['nr']==1){
+		// 	$result=$res['result'];
+		// 	$responseToken=$result[0]['token'];
+		// 	if($responseToken==$token)    
+		// 	{  
+		// 		$response['result']='it is here!';
+		// 		$response['error']=false;   
+		// 	} else{
+		// 		$res3=$db->updateToken($user_id,$device,$os,$token);
+		// 		$response=$res3;  
+		// 	}    
 				      
-			}else{
-				$res2=$db->insertToken($user_id,$device,$os,$token);
-				$response=$res2;  
-				//$response['error']=$res2['error'];
-		}
+		// 	}else{
+		// 		$res2=$db->insertToken($user_id,$device,$os,$token);
+		// 		$response=$res2;  
+		// 		//$response['error']=$res2['error'];
+		// }
 resJson(200,$response);                   
 });  
 
@@ -772,8 +777,10 @@ if(isset($headers['Authorization']))
 			global $user_id;
 			global $user_name;
 			global $model;
+			global $email;
 			$user_id=$res['id']; 
-			$user_name=$res['username'];  
+			$user_name=$res['username'];
+			$email=$res['email'];  
 //echo $user_id;			 
 
 			//echo $user_id;    
