@@ -40,7 +40,7 @@ $app->options("/raports2/:raport_id",function()use ($app){
 cors();     
 //$app->response->headers->set('Content-Type','application/json');
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
-resJson(212,"");                        
+resJson(212,"");                            
 });
 //............  
 //end
@@ -120,8 +120,8 @@ $app->get('/raports2',auth,function() use ($app){
 
 $app->post('/raports2',auth,function() use ($app){
 
-//echo "meta Rap";
-$response=array();    
+ //echo "meta Rap";
+ $response=array();    
    global $user_id;   
    global $user_name;
    global $email;
@@ -149,18 +149,18 @@ $response=array();
 			$deviceType="web";break;  
 		}
 	}
-$db=new DBHelper();  
+   $db=new DBHelper();  
 //$res2=$db->test(111);
 //$res2=db->test($user_name,$Partener,$Month,$Ore,$Minute,$Reviste,$Carti,$Brosuri,$Visite,$Studi); 
 //selectRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi) 
-$res=$db->selectRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi); 
-$nr=count($res);  
+  $res=$db->selectRaport2($user_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi); 
+  $nr=count($res);  
 //echo $nr;      
-$results=array();        
-switch($nr){
-case 0: //echo "no";
+  $results=array();        
+  switch($nr){
+  case 0: //echo "no";
 //echo $user_name;   
-		$res2=$db->insertRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);	   
+		$res2=$db->insertRaport2($user_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);	   
 		//echo $res2;		
 			if(!$res2['error']){    
 				$command='ADD';
@@ -243,7 +243,7 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
 	}
   
 		$db=new DBHelper();
-	    $res = $db->selectMetaByRaportId2($user_id, $user_name, $raport_id, $lastUpdate);
+	    $res = $db->selectMetaByRaportId2($user_id, $email, $raport_id, $lastUpdate);
         $result = array();
         $result['error'] = true;
         $result['message'] = 'imposible to update2';
@@ -267,7 +267,7 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
                    // $result['metaRaportID']=$selectedmetaRaportID;
                     if($lastUpdate>$selectedLastUpdate){
 						//         updateRaport2($raport_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi)
-                        $res2=$db->updateRaport2($raport_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);
+                        $res2=$db->updateRaport2($raport_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);
                         //TODO: change behaviour of update to post error on 
 						//update the same report no changes made  
 						if(!$res2['error']){
@@ -339,7 +339,7 @@ $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
   
   $db=new DBHelper();             
   
-  $res=$db->selectMetaByRaportId2($user_id,$user_name,$raport_id,$newUpdate);
+  $res=$db->selectMetaByRaportId2($user_id,$email,$raport_id,$newUpdate);
    
  // print_r($res); 
   ////move  the array up the tree so i can accest it prin argumente $res['error'] etc 
@@ -349,7 +349,7 @@ $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 		$oldUpdate=$res['lastUpdate'];
 		$command=$res['command'];        
     //print_r($res);    	
-	switch($command){
+	switch($command){  
 	case "ADD":   
 	case "UPDATE":
 					if($newUpdate>=$oldUpdate){

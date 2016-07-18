@@ -30,9 +30,9 @@ $response = array();
                 break;
             default:
         }
-        return $response;
+        return $response;     
 
-
+   
 }
 
 
@@ -81,7 +81,7 @@ public function selectRaport($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$
 	}
 	
 }    
-public function selectRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi){
+public function selectRaport2($user_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi){
 // echo $user_id;
 //echo $user_name+'/n';
  //  echo $Partener;
@@ -95,8 +95,8 @@ public function selectRaport2($user_id,$user_name,$Partener,$Month,$Ore,$Minute,
    //return $Partener;   
   
    $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
-    $stmt = $mysql->prepare("SELECT r.RaportID, m.LastUpdate,r.Month,m.Command FROM RaportNew r JOIN MetaRaport m ON r.RaportID = m.RaportID WHERE r.Ore =? and r.Minute=? and r.Partener=? and  r.Materiale=? and r.Visite=? and r.Month=? and r.Studi=? and r.Vizualizari=?  and r.Username=?");
-   $stmt->bind_param("iisiisiis",$Ore,$Minute,$Partener,$Materiale,$Visite,$Month,$Studi,$Vizualizari,$user_name);  
+    $stmt = $mysql->prepare("SELECT r.RaportID, m.LastUpdate,r.Month,m.Command FROM RaportNew r JOIN MetaRaport m ON r.RaportID = m.RaportID WHERE r.Ore =? and r.Minute=? and r.Partener=? and  r.Materiale=? and r.Visite=? and r.Month=? and r.Studi=? and r.Vizualizari=?  and r.Email=?");
+   $stmt->bind_param("iisiisiis",$Ore,$Minute,$Partener,$Materiale,$Visite,$Month,$Studi,$Vizualizari,$email);  
   
     $result = $stmt->execute();      
 	
@@ -211,13 +211,13 @@ return $response;
 }
 
 
-public function updateRaport2($raport_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi){
+public function updateRaport2($raport_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi){
 $res=array();
 $res['error']=true; 
 $res['message']='test';  
 $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
-$stmt = $mysql->prepare("UPDATE RaportNew Set Partener=? ,Month=?,Ore=?,Minute=?,Vizualizari=?,Studi=?,Visite=?,Materiale=? WHERE RaportID=? and Username=? ");
-			  $stmt->bind_param("ssiiiiiiis",$Partener,$Month,$Ore,$Minute,$Vizualizari,$Studi,$Visite,$Materiale,$raport_id,$user_name);
+$stmt = $mysql->prepare("UPDATE RaportNew Set Partener=? ,Month=?,Ore=?,Minute=?,Vizualizari=?,Studi=?,Visite=?,Materiale=? WHERE RaportID=? and Email=? ");
+			  $stmt->bind_param("ssiiiiiiis",$Partener,$Month,$Ore,$Minute,$Vizualizari,$Studi,$Visite,$Materiale,$raport_id,$email);
 $stmt->execute(); 
 $stmt->store_result();
 $affected_rows=$stmt->affected_rows;   
@@ -354,7 +354,7 @@ if($affected_rows>0){
 return $res;   
 }
 
-public function insertRaport2($user_id,$user_name,$partener,$month,$ore,$minute,$materiale,$vizualizari,$visite,$studi){
+public function insertRaport2($user_id,$email,$partener,$month,$ore,$minute,$materiale,$vizualizari,$visite,$studi){
 $res=array(); 
 /* echo $user_id;  
 echo $user_name;  
@@ -369,8 +369,8 @@ echo $studi;
  */
  $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
 //                                              ($user_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);
-$stmt = $mysql->prepare("INSERT INTO RaportNew(Username, Partener, Month, Ore, Minute, Materiale,Studi, Visite, Vizualizari) VALUES (?,?,?,?,?,?,?,?,?)");  
-$stmt->bind_param("sssiiiiii",$user_name,$partener,$month,$ore,$minute,$materiale,$studi,$visite,$vizualizari);             
+$stmt = $mysql->prepare("INSERT INTO RaportNew(Email, Partener, Month, Ore, Minute, Materiale,Studi, Visite, Vizualizari) VALUES (?,?,?,?,?,?,?,?,?)");  
+$stmt->bind_param("sssiiiiii",$email,$partener,$month,$ore,$minute,$materiale,$studi,$visite,$vizualizari);             
 $stmt->execute();             
 $stmt->store_result();
 $num_rows=$stmt->num_rows;	//pt select
@@ -638,10 +638,10 @@ public function getAllRaportsNew2($userID,$userName){
 	$command='REMOVE';
 	$mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);  
 	//Date_FORMAT(r.Month , '%Y-%m-%d 00:00:00' )
-	$stmt = $mysql->prepare("SELECT r.RaportID, r.Username, r.Ore, r.Partener, r.Visite,r.Materiale,r.Vizualizari,Date_FORMAT(r.Month , '%Y-%m-%d %T' )as Month, r.Minute, r.Studi,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE m.Command != ? AND m.userRaportID = ? ORDER BY r.Month DESC ");          
+	$stmt = $mysql->prepare("SELECT r.RaportID, r.Email, r.Ore, r.Partener, r.Visite,r.Materiale,r.Vizualizari,Date_FORMAT(r.Month , '%Y-%m-%d %T' )as Month, r.Minute, r.Studi,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE m.Command != ? AND m.userRaportID = ? ORDER BY r.Month DESC ");          
     $stmt->bind_param("si",$command,$userID);         
 	$result = $stmt->execute();  
-$res=$stmt->bind_result($id,$name, $ore,$partener,$visite,$materiale,$vizualizari,$month,$minute,$studi,$lastUpdate);  
+$res=$stmt->bind_result($id,$email, $ore,$partener,$visite,$materiale,$vizualizari,$month,$minute,$studi,$lastUpdate);  
 $response=array(); 
 //echo "bog";  
 if($res=true){
@@ -649,7 +649,7 @@ if($res=true){
  $raport=array();
  $raport['id']=$id;
  $raport['month']=$month;
- $raport['username']=$name;
+ $raport['email']=$email;
  $raport['ore']=$ore;
  $raport['partener']=$partener;
  $raport['visite']=$visite;
