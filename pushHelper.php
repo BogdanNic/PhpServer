@@ -470,7 +470,7 @@ $tokenReal='fB1j-SlhsuI:APA91bEbO26kiIgIDo8RuIWOHz34aKezb2alUSbIaFzRDfZFzJb9J3m7
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     echo $_data;
 	   $response = curl_exec($curl);
-	   print $response; 
+	   print $response;       
 print $jsonData;	   
 echo curl_error($curl);	
 curl_close($curl);   
@@ -497,11 +497,11 @@ function sendFirebaseNotification($tokens,$email,$command)
     curl_setopt($curl, CURLOPT_POSTFIELDS,$jsonData);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);  
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    echo $_data;
+    //echo $_data;
 	   $response = curl_exec($curl);
-	   print $response; 
-print $jsonData;     	   
-echo curl_error($curl);	
+	  // print $response; 
+//print $jsonData;     	   
+//echo curl_error($curl);	
 curl_close($curl);   
 }     
 

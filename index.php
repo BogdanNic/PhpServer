@@ -28,7 +28,7 @@ resJson(212,"");
 //user new Raport2        
 //.............
     
-$app->options("/raports2",function()use ($app){    
+$app->options("/raports2",function()use ($app){       
  $app = \Slim\Slim::getInstance();  
 cors();    
 //$app->response->headers->set('Content-Type','application/json');
@@ -40,9 +40,9 @@ $app->options("/raports2/:raport_id",function()use ($app){
 cors();     
 //$app->response->headers->set('Content-Type','application/json');
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
-resJson(212,"");       
+resJson(212,"");                        
 });
-//............
+//............  
 //end
 
 $app->options("/raportsNew",function()use ($app){  
@@ -124,6 +124,7 @@ $app->post('/raports2',auth,function() use ($app){
 $response=array();    
    global $user_id;   
    global $user_name;
+   global $email;
    global $model;
    //echo $user_id;   
 	$response['ore']    =$Ore=$app->request->post('ore');
@@ -176,7 +177,13 @@ case 0: //echo "no";
 							$result['raport_id']=$res2['raport_id'];
 							
 						    resJson(201, $result);   
-							sendParseNotification($user_name,"insert",$deviceType);
+							///sendParseNotification($user_name,"insert",$deviceType);
+							$resTokens = $db->getTokens($user_id,$model); 
+							$tokens=$resTokens['tokens'];  
+							$command='SYNC';
+								if(count($tokens)!=0){
+										sendFirebaseNotification($tokens,$email,$command);
+								}
 						}else{  
 							$result['error']=true;     
 							$result['message']=$res3['message'];
@@ -209,6 +216,7 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
    global $user_id; 
    global $user_name;
    global $model;
+   global $email;
 	$response=array();
 	$response['error']=true;   
 	$response['ore']    =$Ore=$app->request->post('ore');
@@ -268,7 +276,13 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
 							if(!$res3['error']){
 								$result['error']=false;  
 								$result['message'] = 'it great ';
-								sendParseNotification($user_name,"update",$deviceType);            
+									$resTokens = $db->getTokens($user_id,$model); 
+									$tokens=$resTokens['tokens'];  
+									$command='SYNC';
+									if(count($tokens)!=0){
+											sendFirebaseNotification($tokens,$email,$command);
+									}
+								//sendParseNotification($user_name,"update",$deviceType);            
 							}else{							
 								$result['message'] = $res3['message'];
 							}
@@ -301,6 +315,7 @@ $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 	global $user_id;   
 	global $user_name;
 	global $model;
+	global $email;
 	$userAgent=$app->request->getUserAgent();
  
   // echo $id; 
@@ -347,7 +362,13 @@ $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 							
 							
 							resJson(200,$response);
-							sendParseNotification($user_name,"remove",$deviceType);    
+							//sendParseNotification($user_name,"remove",$deviceType);
+							$resTokens = $db->getTokens($user_id,$model); 
+							$tokens=$resTokens['tokens'];  
+							$command='SYNC';
+							if(count($tokens)!=0){    
+									sendFirebaseNotification($tokens,$email,$command);
+							}      
 						}else{
 							$response['error']=true;
 							$response['message']=$res2['message'];
@@ -702,47 +723,21 @@ $deviceType="web";break;
  
 });  
 
-$app->post('/raports2/token',auth,function() use ($app){
+$app->post('/raports2/devices',auth,function() use ($app){
    global $user_id; 
    global $user_name;
    global $email;   
    global $model; 
-$device=$app->request->post('device');
-$os=$app->request->post('os');
-$token=$app->request->post('token');   
+   //$device=$app->request->post('device');
+   $os=$app->request->post('os');
+   $token=$app->request->post('token');   
 
-$response=array();      
-$response['error']=true;       
-// $response['device']   =$device=$app->request->post('device');
-// $response['os']   =$os=$app->request->post('os');
-// $response['token']   =$token=$app->request->post('token');
-// $response['userId']   =$user_id;
-
-$db=new DBHelper();
-	    $res = $db->getTokens($user_id,$model); 
-		$tokens=$res['tokens'];  
-		$command='SYNC';
-		 sendFirebaseNotification($tokens,$email,$command);
-		$response=$res;
-		// if($res['nr']==1){
-		// 	$result=$res['result'];
-		// 	$responseToken=$result[0]['token'];
-		// 	if($responseToken==$token)    
-		// 	{  
-		// 		$response['result']='it is here!';
-		// 		$response['error']=false;   
-		// 	} else{
-		// 		$res3=$db->updateToken($user_id,$device,$os,$token);
-		// 		$response=$res3;  
-		// 	}    
-				      
-		// 	}else{
-		// 		$res2=$db->insertToken($user_id,$device,$os,$token);
-		// 		$response=$res2;  
-		// 		//$response['error']=$res2['error'];
-		// }
-resJson(200,$response);                   
-});  
+  	$response=array();      
+  	$response['error']=true;       
+   	$db=new DBHelper();
+	$res = $db->insertDevice($user_id,$model,$os,$token); 	
+   resJson(200,$res);                   
+});    
 
 
 
