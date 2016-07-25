@@ -1096,11 +1096,11 @@ return $response;
   public function getChangesSince2($user_id,$timeUnix){
  //$command='DELETE';
  $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
-$stmt = $mysql->prepare("SELECT r.RaportID, r.Username, r.Ore, r.Partener, r.Materiale, r.Visite,Date_FORMAT(r.Month , '%Y-%m-%d 00:00:00' ) as Month, r.Minute, r.Vizualizari,m.Command ,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE  m.userRaportID = ? AND m.LastUpdate>? ORDER BY r.Month DESC "); 
+$stmt = $mysql->prepare("SELECT r.RaportID, r.Username, r.Ore, r.Partener, r.Materiale, r.Visite,Date_FORMAT(r.Month , '%Y-%m-%d %T' ) as Month, r.Minute, r.Vizualizari,m.Command ,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE  m.userRaportID = ? AND m.LastUpdate>? ORDER BY r.Month DESC "); 
 $stmt->bind_param("ii",$user_id,$timeUnix);       
 $result = $stmt->execute(); 
 $res=$stmt->bind_result($id,$name, $ore,$partener,$materiale,$visite,$month,$minute,$vizualizari,$command,$lastUpdate); 
-$response=array();
+$response=array();  
 if($res=true){
  while($stmt->fetch()){  
  $raport=array();  

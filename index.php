@@ -25,9 +25,9 @@ $app->response->headers->set('Access-Control-Allow-Origin','*');
 resJson(212,"");       
 });
     
-//user new Raport2        
+//user new Raport2         
 //.............
-    
+      
 $app->options("/raports2",function()use ($app){       
  $app = \Slim\Slim::getInstance();  
 cors();    
@@ -40,10 +40,10 @@ $app->options("/raports2/:raport_id",function()use ($app){
 cors();     
 //$app->response->headers->set('Content-Type','application/json');
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
-resJson(212,"");                            
+resJson(212,"");                                
 });
-//............  
-//end
+//............    
+//end    
 
 $app->options("/raportsNew",function()use ($app){  
  $app = \Slim\Slim::getInstance();  
@@ -109,7 +109,7 @@ $app->get('/raports2',auth,function() use ($app){
 	//echo $timeUnix;  
 	//echo $user_id;
 
-	$res=$db->getAllRaportsNew2($user_id,$user_name);
+	$res=$db->getAllRaportsNew2($user_id,$email);
 	$result=array();
 	$result['error']=false;  
 	$result['raports']=$res;
@@ -158,8 +158,7 @@ $app->post('/raports2',auth,function() use ($app){
 //echo $nr;      
   $results=array();        
   switch($nr){
-  case 0: //echo "no";
-//echo $user_name;   
+  case 0: //echo "no"; 
 		$res2=$db->insertRaport2($user_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);	   
 		//echo $res2;		
 			if(!$res2['error']){    
@@ -177,7 +176,6 @@ $app->post('/raports2',auth,function() use ($app){
 							$result['raport_id']=$res2['raport_id'];
 							
 						    resJson(201, $result);   
-							///sendParseNotification($user_name,"insert",$deviceType);
 							$resTokens = $db->getTokens($user_id,$model); 
 							$tokens=$resTokens['tokens'];  
 							$command='SYNC';
@@ -214,7 +212,6 @@ break;
 
 $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
    global $user_id; 
-   global $user_name;
    global $model;
    global $email;
 	$response=array();
@@ -266,7 +263,6 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
                     $result['message'] = 'it is here ';
                    // $result['metaRaportID']=$selectedmetaRaportID;
                     if($lastUpdate>$selectedLastUpdate){
-						//         updateRaport2($raport_id,$user_name,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi)
                         $res2=$db->updateRaport2($raport_id,$email,$Partener,$Month,$Ore,$Minute,$Materiale,$Vizualizari,$Visite,$Studi);
                         //TODO: change behaviour of update to post error on 
 						//update the same report no changes made  
@@ -282,7 +278,6 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
 									if(count($tokens)!=0){
 											sendFirebaseNotification($tokens,$email,$command);
 									}
-								//sendParseNotification($user_name,"update",$deviceType);            
 							}else{							
 								$result['message'] = $res3['message'];
 							}
@@ -313,7 +308,6 @@ $app->put('/raports2/:raport_id',auth,function($raport_id) use ($app){
 
 $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 	global $user_id;   
-	global $user_name;
 	global $model;
 	global $email;
 	$userAgent=$app->request->getUserAgent();
@@ -362,7 +356,6 @@ $app->delete('/raports2/:raport_id',auth,function($raport_id) use ($app){
 							
 							
 							resJson(200,$response);
-							//sendParseNotification($user_name,"remove",$deviceType);
 							$resTokens = $db->getTokens($user_id,$model); 
 							$tokens=$resTokens['tokens'];  
 							$command='SYNC';
@@ -401,7 +394,6 @@ $app->get('/raports2/updateSince/:id',auth,function($id) use ($app){
   //echo gmdate("Y-m-d\TH:i:s\Z", $id); 
 
  //$date2= gmdate("Y-m-d H:i:s", $id); 
-  global $user_name;
 	global $user_id;
 	$db=new DBHelper();    
 	$res=$db->getChangesSince2($user_id,$id);    
@@ -423,7 +415,7 @@ $app->get('/raportsNew/updateSince/:id',auth,function($id) use ($app){
 //echo gmdate("Y-m-d\TH:i:s\Z", $id); 
 
  //$date2= gmdate("Y-m-d H:i:s", $id); 
-  global $user_name;
+  global $user_name;  
 	global $user_id;
 $db=new DBHelper();    
 $res=$db->getChangesSince($user_id,$id);  
@@ -542,7 +534,7 @@ break;
 
 $app->post('/updateMetaRaport',auth,function() use ($app){
    global $user_id;   
-   global $user_name;
+   //global $user_name;
    
   $command=$app->request->post('command'); 
   $lastUpdate=$app->request->post('lastUpdate');
@@ -557,7 +549,7 @@ $res=$db->updateMetaRaport($command,$lastUpdate,$metaRaportID);
   
 $app->delete('/raportsNew/:raport_id',auth,function($raport_id) use ($app){
    global $user_id;   
-   global $user_name;
+   //global $user_name;
    $userAgent=$app->request->getUserAgent();  
   // echo $id; 
   $model="GT1";
@@ -725,7 +717,7 @@ $deviceType="web";break;
 
 $app->post('/raports2/devices',auth,function() use ($app){
    global $user_id; 
-   global $user_name;
+  // global $user_name;
    global $email;   
    global $model; 
    //$device=$app->request->post('device');
@@ -739,7 +731,20 @@ $app->post('/raports2/devices',auth,function() use ($app){
    resJson(200,$res);                   
 });    
 
-
+$app->post('/raports2/sendN',auth,function() use ($app){
+   global $user_id; 
+  // global $user_name;
+   global $email;   
+   global $model; 
+   	$db=new DBHelper();
+$resTokens = $db->getTokens($user_id,$model); 
+									$tokens=$resTokens['tokens'];  
+									$command='SYNC';
+									if(count($tokens)!=0){
+											sendFirebaseNotification2($tokens,$email,$command);
+									}
+			 resJson(200,$resTokens);						          
+}); 
 
 
 //end
@@ -770,11 +775,11 @@ if(isset($headers['Authorization']))
 		$res=$db->isUserAuth($api_key);
 		if(!$res['error']){
 			global $user_id;
-			global $user_name;
+			//global $user_name;
 			global $model;
 			global $email;
 			$user_id=$res['id']; 
-			$user_name=$res['username'];
+			//$user_name=$res['username'];
 			$email=$res['email'];  
 //echo $user_id;			 
 
@@ -933,9 +938,9 @@ $response = array();
 	$name=$app->request->post('name'); 
 	$email=$app->request->post('email');
 	$password = $app->request->post('password');
-$username = $app->request->post('username'); 	
+//$username = $app->request->post('username'); 	
 $db=new DBHelper();     
-$res=$db->createUser($username,$name,$password,$email);     
+$res=$db->createUser($name,$password,$email);     
   //$res=$db->checkUserExist($email); 
 		if ($res["message"] == "USER_CREATED_SUCCESSFULLY") {    
                 $response["error"] = false;  
