@@ -13,7 +13,7 @@ $response = array();
         $stmt->bind_param("sissi", $command, $lastUpdate,$userAgent,$deviceType, $metaRaportID);      
 
         $result = $stmt->execute();    
-        $nrRows = $stmt->affected_rows;       
+        $nrRows = $stmt->affected_rows;         
         switch ($nrRows)           
         {  
             case - 1:  
@@ -26,7 +26,7 @@ $response = array();
                 break;
             case 1:
                 $response['error'] = false;
-                $response['message'] = 'doneUploading';
+                $response['message'] = 'doneUploading';    
                 break;
             default:
         }
@@ -1096,10 +1096,10 @@ return $response;
   public function getChangesSince2($user_id,$timeUnix){
  //$command='DELETE';
  $mysql=new mysqli(DB_HOST,DB_USERNAME,DB_PASSWORD,DB_NAME);
-$stmt = $mysql->prepare("SELECT r.RaportID, r.Username, r.Ore, r.Partener, r.Materiale, r.Visite,Date_FORMAT(r.Month , '%Y-%m-%d %T' ) as Month, r.Minute, r.Vizualizari,m.Command ,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE  m.userRaportID = ? AND m.LastUpdate>? ORDER BY r.Month DESC "); 
+$stmt = $mysql->prepare("SELECT r.RaportID, r.Username, r.Ore, r.Partener, r.Materiale, r.Visite,r.Studi,Date_FORMAT(r.Month , '%Y-%m-%d %T' ) as Month, r.Minute, r.Vizualizari,m.Command ,m.LastUpdate FROM MetaRaport m INNER JOIN RaportNew r ON r.RaportID = m.RaportID WHERE  m.userRaportID = ? AND m.LastUpdate>? ORDER BY r.Month DESC "); 
 $stmt->bind_param("ii",$user_id,$timeUnix);       
 $result = $stmt->execute(); 
-$res=$stmt->bind_result($id,$name, $ore,$partener,$materiale,$visite,$month,$minute,$vizualizari,$command,$lastUpdate); 
+$res=$stmt->bind_result($id,$name, $ore,$partener,$materiale,$visite,$studi,$month,$minute,$vizualizari,$command,$lastUpdate); 
 $response=array();  
 if($res=true){
  while($stmt->fetch()){  
@@ -1109,6 +1109,7 @@ if($res=true){
  $raport['ore']=$ore;
  $raport['partener']=$partener;
  $raport['visite']=$visite;
+ $raport['studi']=$studi;
  $raport['materiale']=$materiale;
 $raport['minute']=$minute; 
 $raport['vizualizari']=$vizualizari; 
