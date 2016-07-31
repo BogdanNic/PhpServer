@@ -11,7 +11,7 @@ $app = new \Slim\Slim(array(
 )); 
      
 $app->options("/raports/:raport_id",function()use ($app){  
- $app = \Slim\Slim::getInstance();      
+ $app = \Slim\Slim::getInstance();   
 cors();       
 //$app->response->headers->set('Content-Type','application/json');
 $app->response->headers->set('Access-Control-Allow-Origin','*');  
@@ -939,8 +939,9 @@ $response = array();
 	$email=$app->request->post('email');
 	$password = $app->request->post('password');
 //$username = $app->request->post('username'); 	
-$db=new DBHelper();     
-$res=$db->createUser($name,$password,$email);     
+$db=new DBHelper(); 
+$username="newUser";      
+$res=$db->createUser($username,$name,$password,$email);     
   //$res=$db->checkUserExist($email); 
 		if ($res["message"] == "USER_CREATED_SUCCESSFULLY") {    
                 $response["error"] = false;  
